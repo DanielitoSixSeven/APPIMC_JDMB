@@ -23,7 +23,7 @@ namespace APPIMC_JDMB.ViewModels
             set
             {
                 resultado = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(resultado)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Resultado)));
             }
         }
 
@@ -34,7 +34,7 @@ namespace APPIMC_JDMB.ViewModels
             set
             {
                 clasificacion = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(clasificacion)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Clasificacion)));
             }
         }
         public ICommand CalcularCommand { get; }
@@ -45,41 +45,32 @@ namespace APPIMC_JDMB.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
         private void Calcular()
         {
-            double peso;
-            bool pesoValido = double.TryParse(PesoT, out peso);
-            if(pesoValido == false || !double.IsFinite(peso) || peso <= 0)
+            if (!double.TryParse(PesoT, out double peso) || !double.IsFinite(peso) || peso <= 0)
             {
-                Resultado = "Peso Invalido";
-                clasificacion = "";
-                return;
-            }
-
-            double estatura;
-            bool estaturaValido = double.TryParse(EstaturaT, out estatura);
-            if(estaturaValido == false || !double.IsFinite(estatura) || estatura <= 0)
-            {
-                Resultado = "Estatura Invalida";
+                Resultado = "Peso inválido";
                 Clasificacion = "";
                 return;
             }
 
-            Persona persona = new Persona();
-            persona.Peso = peso;
-            persona.Estatura = estatura;
+            if (!double.TryParse(EstaturaT, out double estatura) || !double.IsFinite(estatura) || estatura <= 0)
+            {
+                Resultado = "Estatura inválida";
+                Clasificacion = "";
+                return;
+            }
 
+            Persona persona = new Persona { Peso = peso, Estatura = estatura };
             double imc = persona.CalcularIMC();
 
             if (!double.IsFinite(imc))
             {
                 Resultado = "Revisa el peso y estatura";
-                clasificacion = "";
+                Clasificacion = "";
+                return;
             }
 
-            resultado = "Tu IMC es: " + imc.ToString("F2");
-
-            clasificacion = persona.clasificacion(imc);
-
-
+            Resultado = "Tu IMC es: " + imc.ToString("F2");
+            Clasificacion = persona.clasificacion(imc);
         }
     }
 }

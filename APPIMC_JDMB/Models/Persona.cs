@@ -29,7 +29,7 @@ namespace APPIMC_JDMB.Models
 
             else if(imc < 30)
             {
-                return "sorepeso";
+                return "sobrepeso";
             }
             else
             {
